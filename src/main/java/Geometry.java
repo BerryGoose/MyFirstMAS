@@ -1,16 +1,21 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+package Geometry;
+        
+public class Point{
+    double x;
+    double y;
+    double angle;
+}
 
+public class SimpleSegment{
+    double start;
+    double end;
+    double length;
+}
 
-/**
- *
- * @author Tema
- */
-public class Geometry {
-    double x = 0;
-    double y = 0;
-    double angle = 0;
-    
+public class Segment{
+    Point start;
+    Point end;
+    double length;
+    double k;
+    double b;
 }
