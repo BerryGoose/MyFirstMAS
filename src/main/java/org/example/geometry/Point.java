@@ -1,0 +1,72 @@
+package org.example.geometry;
+
+import java.util.Objects;
+
+public class Point {
+    private double x;
+    private double y;
+    public Point(){
+        x = 0;
+        y = 0;
+    }
+    public Point(double x, double y){
+        this.x = x;
+        this.y = y;
+    }
+    public double getX() {
+        return x;
+    }
+    public double getY() {
+        return y;
+    }
+
+    public double getAngle() {
+        if(x == 0 & y == 1) return Math.PI / 2;
+        if(x == 0 & y == -1) return 3 * Math.PI / 2;
+        if(x == 1 & y == 0) return 0;
+        if(x == -1 & y == 0) return Math.PI;
+
+        if(x > 0 & y > 0) return Math.atan(y / x);
+        if(x < 0 & y > 0) return Math.PI / 2 - Math.atan(y / x);
+        if(x > 0 & y < 0) return 1.5 * Math.PI - Math.atan(y / x);
+        if(x < 0 & y < 0) return Math.PI + Math.atan(y / x);
+
+        return 0;
+    }
+
+    public Point sumPoint(Point other){
+        double tempX = this.x + other.x;
+        double tempY = this.y + other.y;
+        return new Point(tempX, tempY);
+    }
+
+    public Point difPoint(Point other){
+        double tempX = this.x - other.x;
+        double tempY = this.y - other.y;
+        return new Point(tempX, tempY);
+    }
+    @Override
+    public String toString() {
+        return "Point{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Point point = (Point) o;
+        return Double.compare(point.x, x) == 0 && Double.compare(point.y, y) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
+    }
+
+    public Point copy(){
+        return new Point(this.getX(), this.getY());
+    }
+}
