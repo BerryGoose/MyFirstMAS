@@ -5,8 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 public class Segment {
-    private Point start;
-    private Point end;
+    private final Point start;
+    private final Point end;
 
     public Segment(){
         start = new Point();
@@ -14,25 +14,17 @@ public class Segment {
     }
 
     public Segment(@NotNull Point start, @NotNull Point end){
-        this.start = start.copy();
-        this.end = end.copy();
+        this.start = start;
+        this.end = end;
     }
 
-    public Point getStart(){return start.copy();}
-    public Point getEnd() {return end.copy();}
+    public Point getStart(){return start;}
+    public Point getEnd() {return end;}
     public double getLength() {return Math.sqrt((start.getX() - end.getX()) * (start.getX() - end.getX()) + (start.getY() - end.getY()) * (start.getY() - end.getY()));}
     public double getB(){return start.getY() - getAngle() * start.getX();}
     public double getAngle() {
         return end.difPoint(start).getAngle();
     }
-
-    public void setStart(@NotNull Point start){
-        this.start = start.copy();
-    }
-    public void setEnd(@NotNull Point end){
-        this.end = end.copy();
-    }
-
     @Override
     public String toString() {
         return "Segment{" +
@@ -52,9 +44,5 @@ public class Segment {
     @Override
     public int hashCode() {
         return Objects.hash(start, end);
-    }
-
-    public Segment copy(){
-        return new Segment(start.copy(), end.copy());
     }
 }
