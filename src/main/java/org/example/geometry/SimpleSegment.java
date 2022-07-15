@@ -3,8 +3,8 @@ package org.example.geometry;
 import java.util.Objects;
 
 public class SimpleSegment {
-    private double start;
-    private double end;
+    private final double start;
+    private final double end;
 
     public SimpleSegment(){
         start = 0;
@@ -17,14 +17,6 @@ public class SimpleSegment {
     public double getStart() {return start;}
     public double getEnd(){return end;}
     public double getLength(){return Math.abs(start - end);}
-
-    public void setStart(double start) {
-        this.start = start;
-    }
-    public void setEnd(double end){
-        this.end = end;
-    }
-
     @Override
     public String toString() {
         return "SimpleSegment{" +
@@ -46,7 +38,4 @@ public class SimpleSegment {
         return Objects.hash(start, end);
     }
 
-    public SimpleSegment copy(){
-        return new SimpleSegment(start, end);
-    }
 }
