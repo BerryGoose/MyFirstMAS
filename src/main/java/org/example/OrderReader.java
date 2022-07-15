@@ -9,8 +9,8 @@ import java.io.*;
 public abstract class OrderReader {
 
     static public Order[] readOrder(String filePath){
-        double pickupWindow = 120;
-        double deliveryWindow = 480;
+        int pickupWindow = 120;
+        int deliveryWindow = 480;
         Order[] orderArray = new Order[0];
         try{
             File input = new File(filePath);
@@ -40,9 +40,8 @@ public abstract class OrderReader {
                     Order newOrder = new Order(start, end, startTimePeriod, endTimePeriod);
 
                     Order[] tempOrderArray = new Order[orderArray.length + 1];
-                    for(int i=0;i<orderArray.length;i++){
-                        tempOrderArray[i] = orderArray[i];
-                    }
+
+                    System.arraycopy(orderArray, 0, tempOrderArray, 0, orderArray.length);
                     tempOrderArray[orderArray.length] = newOrder;
                     orderArray = tempOrderArray.clone();
 
