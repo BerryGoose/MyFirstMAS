@@ -18,17 +18,17 @@ public class Order {
         startTimePeriod = new SimpleSegment();
         endTimePeriod = new SimpleSegment();
     }
-    public Order(@NotNull Point start, @NotNull Point end, double startTime){
-        this.start = start.copy() ;
-        this.end = end.copy();
-        startTimePeriod = new SimpleSegment(startTime, startTime + 120);
-        endTimePeriod = new SimpleSegment(startTime, startTime + 480);
+    public Order(@NotNull Point start, @NotNull Point end, SimpleSegment startTimePeriod, SimpleSegment endTimePeriod){
+        this.start = start;
+        this.end = end;
+        this.startTimePeriod = startTimePeriod;
+        this.endTimePeriod = endTimePeriod;
     }
 
-    public Point getStart(){return start.copy();}
-    public Point getEnd(){return end.copy();}
-    public SimpleSegment getStartTimePeriod(){return startTimePeriod.copy();}
-    public SimpleSegment getEndTimePeriod(){return endTimePeriod.copy();}
+    public Point getStart(){return start;}
+    public Point getEnd(){return end;}
+    public SimpleSegment getStartTimePeriod(){return startTimePeriod;}
+    public SimpleSegment getEndTimePeriod(){return endTimePeriod;}
 
     @Override
     public String toString() {
@@ -51,9 +51,5 @@ public class Order {
     @Override
     public int hashCode() {
         return Objects.hash(start, end, startTimePeriod, endTimePeriod);
-    }
-
-    public Order copy(){
-        return new Order(start.copy(), end.copy(), startTimePeriod.getStart());
     }
 }
