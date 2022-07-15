@@ -14,13 +14,13 @@ public class OrderActor {
     }
     public OrderActor(@NotNull Order order, String name, String dispAddress){
         myAddr = name;
-        this.order = order.copy();
+        this.order = order;
         this.dispAddress = dispAddress;
     }
 
-    public Order getOrder() {return order.copy();}
+    public Order getOrder() {return order;}
     public String getMyAddress() {return myAddr;}
-    public void setOrder(@NotNull Order order) {this.order = order.copy();}
+    public void setOrder(@NotNull Order order) {this.order = order;}
     public void setDispAddress(String dispAddress){this.dispAddress = dispAddress;}
 
     @Override

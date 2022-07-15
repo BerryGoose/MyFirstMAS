@@ -4,29 +4,56 @@ import org.example.actrors.Order;
 import org.example.geometry.Point;
 import org.example.geometry.SimpleSegment;
 
+import java.io.*;
+
 public abstract class OrderReader {
 
-    public Order readOrder(String line){
+    static public Order[] readOrder(String filePath){
         double pickupWindow = 120;
         double deliveryWindow = 480;
+        Order[] orderArray = new Order[0];
+        try{
+            File input = new File(filePath);
+            FileReader inputReader = new FileReader(input);
+            BufferedReader reader = new BufferedReader(inputReader);
+            try{
+                String line = reader.readLine();
 
-        String orderTime;
-        String[] inpStart;
-        String[] inpEnd;
-        String[] strs;
+                while(line != null){
+                    String orderTime;
+                    String[] inpStart;
+                    String[] inpEnd;
+                    String[] strs;
 
-        strs = line.split(", ");
-        inpStart = strs[1].split(" ");
-        inpEnd = strs[2].split(" ");
-        orderTime = strs[3];
+                    strs = line.split(", ");
+                    inpStart = strs[1].split(" ");
+                    inpEnd = strs[2].split(" ");
+                    orderTime = strs[3];
 
-        double startTime = Double.parseDouble(orderTime);
+                    double startTime = Double.parseDouble(orderTime);
 
-        Point start = new Point(Double.parseDouble(inpStart[0]), Double.parseDouble(inpStart[1]));
-        Point end = new Point(Double.parseDouble(inpEnd[0]),Double.parseDouble(inpEnd[0]));
-        SimpleSegment startTimePeriod = new SimpleSegment(startTime, startTime + pickupWindow);
-        SimpleSegment endTimePeriod = new SimpleSegment(startTime, startTime + deliveryWindow);
+                    Point start = new Point(Double.parseDouble(inpStart[0]), Double.parseDouble(inpStart[1]));
+                    Point end = new Point(Double.parseDouble(inpEnd[0]),Double.parseDouble(inpEnd[1]));
+                    SimpleSegment startTimePeriod = new SimpleSegment(startTime, startTime + pickupWindow);
+                    SimpleSegment endTimePeriod = new SimpleSegment(startTime, startTime + deliveryWindow);
 
-        return  new Order(start, end, startTimePeriod, endTimePeriod);
+                    Order newOrder = new Order(start, end, startTimePeriod, endTimePeriod);
+
+                    Order[] tempOrderArray = new Order[orderArray.length + 1];
+                    for(int i=0;i<orderArray.length;i++){
+                        tempOrderArray[i] = orderArray[i];
+                    }
+                    tempOrderArray[orderArray.length] = newOrder;
+                    orderArray = tempOrderArray.clone();
+
+                    line = reader.readLine();
+                }
+            }catch (IOException ex){
+                ex.printStackTrace();
+            }
+        } catch (FileNotFoundException ex){
+            ex.printStackTrace();
+         }
+        return orderArray;
     }
 }
