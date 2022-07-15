@@ -19,13 +19,13 @@ public class Route {
     public Route(Point start, Point end, double startTime, double endTime, RouteType type, @NotNull Order order){
         this.way = new Segment(start, end);
         this.type = type;
-        this.order = order.copy();
+        this.order = order;
         this.timePeriod = new SimpleSegment(startTime, endTime);
     }
     public Segment getWay(){return way;}
     public RouteType getType(){return type;}
     public SimpleSegment getTimePeriod(){return timePeriod;}
-    public Order getOrder(){return order.copy();}
+    public Order getOrder(){return order;}
     public double getLength(){return way.getLength();}
 
     @Override
@@ -50,5 +50,4 @@ public class Route {
     public int hashCode() {
         return Objects.hash(way, type, order, timePeriod);
     }
-    
 }
