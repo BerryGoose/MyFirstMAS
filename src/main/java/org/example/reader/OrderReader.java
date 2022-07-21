@@ -1,16 +1,18 @@
-package org.example;
+package org.example.reader;
 
-import org.example.actrors.Order;
+import org.example.actors.Order;
 import org.example.geometry.Point;
 import org.example.geometry.SimpleSegment;
 
 import java.io.*;
 
 public abstract class OrderReader {
-
     static public Order[] readOrder(String filePath){
-        int pickupWindow = 120;
-        int deliveryWindow = 480;
+        return readOrder(filePath, 120, 480);
+    }
+
+    static public Order[] readOrder(String filePath, int pickupWindow, int deliveryWindow){
+
         Order[] orderArray = new Order[0];
         try{
             File input = new File(filePath);
@@ -19,16 +21,11 @@ public abstract class OrderReader {
             try{
                 String line = reader.readLine();
 
-                while(line != null){
-                    String orderTime;
-                    String[] inpStart;
-                    String[] inpEnd;
-                    String[] strs;
-
-                    strs = line.split(", ");
-                    inpStart = strs[1].split(" ");
-                    inpEnd = strs[2].split(" ");
-                    orderTime = strs[3];
+                while(line != null){;
+                    String[] strs = line.split(", ");
+                    String[] inpStart = strs[1].split(" ");
+                    String[] inpEnd = strs[2].split(" ");
+                    String orderTime = strs[3];
 
                     double startTime = Double.parseDouble(orderTime);
 

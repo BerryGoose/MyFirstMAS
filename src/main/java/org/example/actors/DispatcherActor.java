@@ -1,4 +1,4 @@
-package org.example.actrors;
+package org.example.actors;
 
 public class DispatcherActor {
     String myAddr = "";

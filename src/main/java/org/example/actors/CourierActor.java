@@ -1,4 +1,4 @@
-package org.example.actrors;
+package org.example.actors;
 
 import org.example.geometry.Point;
 import org.example.geometry.Route;

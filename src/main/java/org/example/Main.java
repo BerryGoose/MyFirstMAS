@@ -1,9 +1,7 @@
 package org.example;
 
-import org.example.actrors.Order;
-import org.example.geometry.Point;
-
-import java.io.*;
+import org.example.actors.Order;
+import org.example.reader.OrderReader;
 
 public class Main {
     public static void main(String[] args) {

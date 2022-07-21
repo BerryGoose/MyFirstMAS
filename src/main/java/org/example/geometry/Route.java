@@ -1,6 +1,6 @@
 package org.example.geometry;
 
-import org.example.actrors.Order;
+import org.example.actors.Order;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
