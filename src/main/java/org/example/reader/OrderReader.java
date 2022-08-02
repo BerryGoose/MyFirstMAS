@@ -1,6 +1,6 @@
 package org.example.reader;
 
-import org.example.actors.Order;
+import org.example.actors.order.Order;
 import org.example.geometry.Point;
 import org.example.geometry.SimpleSegment;
 
@@ -40,6 +40,8 @@ public abstract class OrderReader {
                 orderArray.add(newOrder);
                 line = reader.readLine();
             }
+            reader.close();
+            inputReader.close();
         } catch (IOException ex){
             ex.printStackTrace();
         }
