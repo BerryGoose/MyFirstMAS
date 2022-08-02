@@ -19,7 +19,6 @@ public class Point {
     public double getY() {
         return y;
     }
-
     public double getAngle() {
         if(x == 0 & y == 1) return Math.PI / 2;
         if(x == 0 & y == -1) return 3 * Math.PI / 2;
@@ -34,6 +33,9 @@ public class Point {
         return 0;
     }
 
+    public double abs(){
+        return Math.sqrt(x * x + y * y);
+    }
     public Point sumPoint(Point other){
         double tempX = this.x + other.x;
         double tempY = this.y + other.y;
@@ -45,6 +47,19 @@ public class Point {
         double tempY = this.y - other.y;
         return new Point(tempX, tempY);
     }
+
+    public double distanceTo(Point point){
+        return this.difPoint(point).abs();
+    }
+
+    public double angleTo(Point point){
+        return point.difPoint(this).getAngle();
+    }
+
+    public boolean isInCircle(Point center, double radius){
+        return center.distanceTo(this) <= radius;
+    }
+
     @Override
     public String toString() {
         return "Point{" +

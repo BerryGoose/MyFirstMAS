@@ -17,6 +17,18 @@ public class SimpleSegment {
     public double getStart() {return start;}
     public double getEnd(){return end;}
     public double getLength(){return Math.abs(start - end);}
+
+    public boolean containPoint(double point){
+        return start <= point && point <= end;
+    }
+
+    public boolean overlay(SimpleSegment segment){
+        if (this.containPoint(segment.getStart()) || this.containPoint(segment.getEnd())){
+            return true;
+        }
+        return segment.containPoint(this.getStart()) || segment.containPoint(this.getEnd());
+    }
+
     @Override
     public String toString() {
         return "SimpleSegment{" +
