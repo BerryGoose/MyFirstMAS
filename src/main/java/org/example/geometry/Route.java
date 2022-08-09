@@ -2,9 +2,7 @@ package org.example.geometry;
 
 import org.example.actors.order.Order;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.Objects;
-
 public class Route {
     private final Segment way;
     private final RouteType type;

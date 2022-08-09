@@ -1,9 +1,7 @@
 package org.example.geometry;
 
 import org.jetbrains.annotations.NotNull;
-
 import java.util.Objects;
-
 public class Segment {
     private final Point start;
     private final Point end;

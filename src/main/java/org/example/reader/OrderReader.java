@@ -1,21 +1,20 @@
 package org.example.reader;
 
 import org.example.actors.order.Order;
+import org.example.constants.TimeConsts;
 import org.example.geometry.Point;
 import org.example.geometry.SimpleSegment;
-
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
 public abstract class OrderReader {
-    static public List<Order> readOrder(String filePath){
-        return readOrder(filePath, 120, 480);
+    static public HashMap<Integer, Order> readOrder(String filePath){
+        return readOrder(filePath, TimeConsts.STANDARTPICKUPWINDOW, TimeConsts.STANDARTDELIVERYWINDOW);
     }
 
-    static public List<Order> readOrder(String filePath, int pickupWindow, int deliveryWindow){
-
-        List<Order> orderArray = new ArrayList<>();
+    static public HashMap<Integer, Order> readOrder(String filePath, int pickupWindow, int deliveryWindow){
+        HashMap<Integer, Order> orderHashMap = new HashMap<>();
         try{
             File input = new File(filePath);
             FileReader inputReader = new FileReader(input);
@@ -28,7 +27,8 @@ public abstract class OrderReader {
                 String[] inpEnd = strs[2].split(" ");
                 String orderTime = strs[3];
 
-                double startTime = Double.parseDouble(orderTime);
+                int arrivalTime = Integer.parseInt(strs[0]) * TimeConsts.MSINMINUTE;
+                int startTime = Integer.parseInt(orderTime) * TimeConsts.MSINMINUTE;
 
                 Point start = new Point(Double.parseDouble(inpStart[0]), Double.parseDouble(inpStart[1]));
                 Point end = new Point(Double.parseDouble(inpEnd[0]),Double.parseDouble(inpEnd[1]));
@@ -37,7 +37,7 @@ public abstract class OrderReader {
 
                 Order newOrder = new Order(start, end, startTimePeriod, endTimePeriod);
 
-                orderArray.add(newOrder);
+                orderHashMap.put(arrivalTime, newOrder);
                 line = reader.readLine();
             }
             reader.close();
@@ -45,6 +45,6 @@ public abstract class OrderReader {
         } catch (IOException ex){
             ex.printStackTrace();
         }
-        return orderArray;
+        return orderHashMap;
     }
 }

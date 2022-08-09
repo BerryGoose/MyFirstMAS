@@ -1,7 +1,16 @@
 package org.example.message;
-
 public enum MsgType {
-    GetTime,
+    GetCouriers,
     WillBeInArea,
-
+    CanAddToEnd,
+    CanDeliver,
+    GetDeliveryCost,
+    NewCourier,
+    NewOrder,
+    GetRoutesAmount,
+    AddToWaitList,
+    RemoveFromWaitList,
+    AskToDeliver,
+    Update,
+    FindCourier
 }

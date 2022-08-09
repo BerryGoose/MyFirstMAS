@@ -1,17 +1,13 @@
 package org.example.actors.order;
 
-
 import org.example.geometry.*;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.Objects;
-
-
 public class Order {
-    private Point start;
-    private Point end;
-    private SimpleSegment startTimePeriod;
-    private SimpleSegment endTimePeriod;
+    private final Point start;
+    private final Point end;
+    private final SimpleSegment startTimePeriod;
+    private final SimpleSegment endTimePeriod;
     public Order(){
         start = new Point();
         end = new Point();

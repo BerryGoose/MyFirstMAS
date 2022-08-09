@@ -1,7 +1,8 @@
 package org.example.geometry;
 
+import org.example.constants.SpeedConsts;
 import java.util.Objects;
-
+import java.util.Random;
 public class Point {
     private final double x;
     private final double y;
@@ -48,6 +49,9 @@ public class Point {
         return new Point(tempX, tempY);
     }
 
+    public boolean isEqual(Point other){
+        return distanceTo(other) <= SpeedConsts.FOURTYKMH;
+    }
     public double distanceTo(Point point){
         return this.difPoint(point).abs();
     }
@@ -60,6 +64,14 @@ public class Point {
         return center.distanceTo(this) <= radius;
     }
 
+    public static Point randomPoint(){
+        Random random = new Random();
+        double radius = random.nextDouble(80);
+        double angle = random.nextDouble(2 * Math.PI);
+        double x = radius * Math.cos(angle);
+        double y = radius * Math.sin(angle);
+        return new Point(x, y);
+    }
     @Override
     public String toString() {
         return "Point{" +

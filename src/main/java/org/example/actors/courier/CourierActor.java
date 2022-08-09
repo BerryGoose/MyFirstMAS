@@ -1,43 +1,27 @@
 package org.example.actors.courier;
 
-import org.example.CostConsts;
-import org.example.TimeConsts;
-import org.example.actors.ActorSystem;
+import org.example.constants.*;
 import org.example.actors.BaseActor;
 import org.example.actors.order.Order;
-import org.example.geometry.Point;
-import org.example.geometry.Route;
-import org.example.geometry.RouteType;
-import org.example.geometry.Segment;
-import org.example.message.Message;
-import org.example.message.MsgType;
-
+import org.example.geometry.*;
+import org.example.message.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
 public class CourierActor extends BaseActor {
     private double speed;
     private String dispAddress;
-    private final String myAddress;
     private List<Route> routes = new ArrayList<Route>();
     private Point position;
     private double direction;
     private double earned;
     private CourierStatus status = CourierStatus.Wait;
-
-    public CourierActor(){
-        super("");
-        myAddress = super.getMyAddress();
-        position = new Point();
-    }
     public CourierActor(String dispAddress, Point position, String name, double speed){
         super(name);
-        myAddress = super.getMyAddress();
         this.dispAddress = dispAddress;
         this.position = position;
         this.speed = speed;
-
+        send(dispAddress, new Message(MsgType.NewCourier));
     }
     public String getMyAddress(){return myAddress;}
     public String getDispAddress(){return dispAddress;}
@@ -51,8 +35,7 @@ public class CourierActor extends BaseActor {
         for (Route route : routes) {
             satisfaction += route.getLength() / speed;
         }
-        int time = Integer.parseInt(ActorSystem.ask(dispAddress, new Message(MsgType.GetTime)));
-        return satisfaction / TimeConsts.getDay();
+        return satisfaction / TimeConsts.MSINDAY;
     }
 
     public void setDispAddress(String dispAddress){
@@ -78,44 +61,40 @@ public class CourierActor extends BaseActor {
         double dy = speed * Math.sin(direction);
 
         position = position.sumPoint(new Point(dx, dy));
+        earned -= CostConsts.MSSELFCOST;
     }
 
     private void update(){
-        int time = Integer.parseInt(ActorSystem.ask(dispAddress, new Message(MsgType.GetTime)));
         if (routes.size() == 0){
             status = CourierStatus.Wait;
         } else if (status == CourierStatus.Work) {
-            if (position.equals(routes.get(0).getWay().getEnd())){
-                earned += CostConsts.getKmCost() * routes.get(0).getLength();
+            if (position.isEqual(routes.get(0).getWay().getEnd())){
+                earned += CostConsts.KMCOST * routes.get(0).getLength();
                 routes.remove(0);
                 if (routes.size() == 0){
                     status = CourierStatus.Wait;
                 }
                 else{
                     status = CourierStatus.Take;
-                    this.move();
-                    earned -= CostConsts.getMsSelfCost();
+                    move();
                 }
             }
             else {
-                this.move();
-                earned -= CostConsts.getMsSelfCost();
+                move();
             }
-            
+
         } else if (status == CourierStatus.Wait) {
             if (routes.get(0).getOrder().getStartTimePeriod().getStart() <= time && time <= routes.get(0).getOrder().getStartTimePeriod().getEnd()){
                 status = CourierStatus.Work;
             }
         } else if (status == CourierStatus.Take) {
-            if (position.equals(routes.get(0).getWay().getStart())) {
+            if (position.isEqual(routes.get(0).getWay().getStart())) {
                 if (routes.get(0).getOrder().getStartTimePeriod().getStart() <= time && time <= routes.get(0).getOrder().getStartTimePeriod().getEnd()) {
                     status = CourierStatus.Work;
                     move();
-                    earned -= CostConsts.getMsSelfCost();
                 } else status = CourierStatus.Wait;
             }else {
                 move();
-                earned -= CostConsts.getMsSelfCost();
             }
         }
     }
@@ -139,11 +118,11 @@ public class CourierActor extends BaseActor {
     }
 
     private int indexToInsert(Order order){
-        int time = Integer.parseInt(ActorSystem.ask(dispAddress, new Message(MsgType.GetTime)));
         if (routes.size() == 0){
             if (order.getStartTimePeriod().getEnd() >= time + position.distanceTo(order.getStart()) / speed){
                 return 0;
             }
+            else return -1;
         } if (status == CourierStatus.Wait || status == CourierStatus.Take){
             double takeTime = position.distanceTo(order.getStart()) / speed;
             double deliveryTime = order.getStart().distanceTo(order.getEnd()) / speed;
@@ -181,7 +160,9 @@ public class CourierActor extends BaseActor {
         }
         return -1;
     }
-
+    private boolean canDeliver(Order order){
+        return indexToInsert(order) != -1;
+    }
     private double deliveryCost(Order order){
         int index = indexToInsert(order);
         double summaryDistance = order.getStart().distanceTo(order.getEnd());
@@ -191,11 +172,10 @@ public class CourierActor extends BaseActor {
         else{
             summaryDistance += routes.get(index - 1).getWay().getEnd().distanceTo(order.getStart()) + order.getEnd().distanceTo(routes.get(index).getWay().getStart());
         }
-        return summaryDistance * CostConsts.getKmCost();
+        return summaryDistance * CostConsts.KMCOST;
     }
 
     private void addOrder(Order order){
-        int time = Integer.parseInt(ActorSystem.ask(dispAddress, new Message(MsgType.GetTime)));
         int index;
         if (routes.size() == 0){
             index = 0;
@@ -216,6 +196,18 @@ public class CourierActor extends BaseActor {
         routes.add(index, newRoute);
     }
 
+    private boolean canAddToEnd(Order order){
+        double timeToStart;
+        double arrivalTime;
+        if(routes.size() == 0){
+            timeToStart = position.distanceTo(order.getStart()) / speed;
+            arrivalTime = time + timeToStart;
+        } else{
+            timeToStart = routes.get(routes.size() - 1).getWay().getEnd().distanceTo(order.getStart()) / speed;
+            arrivalTime = routes.get(routes.size() - 1).getTimePeriod().getEnd() + timeToStart;
+        }
+        return arrivalTime <= order.getStartTimePeriod().getEnd();
+    }
     @Override
     public String toString() {
         return "CourierActor{" +
@@ -245,13 +237,28 @@ public class CourierActor extends BaseActor {
     }
 
     @Override
-    public void receiveMessage(String sender, Message message){
-    }
-    @Override
-    public String receiveMessage(Message message){
+    public Object receiveMessage(String sender, Message message){
+        switch (message.getType()){
+            case WillBeInArea:
+                Order order = (Order) message.getContent();
+                return willBeInArea(order.getStart(), order.getStart().distanceTo(new Point(0, 0)) / 2);
+            case GetRoutesAmount:
+                return routes.size();
+            case CanAddToEnd:
+                return canAddToEnd((Order) message.getContent());
+            case CanDeliver:
+                return canDeliver((Order) message.getContent());
+            case GetDeliveryCost:
+                return deliveryCost((Order) message.getContent());
+            case AskToDeliver:
+                addOrder((Order) message.getContent());
+                break;
+            case Update:
+                update();
+                break;
+        }
         return null;
     }
-
 
 
 

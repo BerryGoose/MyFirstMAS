@@ -1,7 +1,6 @@
 package org.example.geometry;
 
 import java.util.Objects;
-
 public class SimpleSegment {
     private final double start;
     private final double end;

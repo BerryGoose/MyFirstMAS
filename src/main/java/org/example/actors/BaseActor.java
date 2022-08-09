@@ -1,26 +1,32 @@
 package org.example.actors;
 
 import org.example.message.Message;
-
+import java.util.HashMap;
 import java.util.Objects;
-
-public class BaseActor extends ActorSystem {
-    final String myAddress;
+public class BaseActor{
+    protected String myAddress;
+    protected static int time;
+    protected static HashMap<String, BaseActor> actorArea = new HashMap<String, BaseActor>();
+    public BaseActor(){
+        myAddress = "";
+    }
     public BaseActor(String myAddress) {
         this.myAddress = myAddress;
+        actorArea.put(myAddress, this);
     }
-
     public String getMyAddress() {
         return myAddress;
     }
     public void send(String recipientAddress, Message message){
-        super.sendMessage(myAddress, recipientAddress, message);
+        actorArea.get(recipientAddress).receiveMessage(myAddress, message);
     }
-    public void receiveMessage(String sender, Message message){
+
+    public Object ask(String recipientAddress, Message message){
+        return actorArea.get(recipientAddress).receiveMessage(myAddress, message);
 
     }
-    public String receiveMessage(Message message){
-        return "";
+    public Object receiveMessage(String sender, Message message){
+        return null;
     }
 
     @Override

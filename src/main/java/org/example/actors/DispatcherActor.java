@@ -2,66 +2,53 @@ package org.example.actors;
 
 import org.example.message.Message;
 import org.example.message.MsgType;
-import java.util.Arrays;
-
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 public class DispatcherActor extends BaseActor{
-    private String[] orders;
-    private String[] couriers;
-
-    private int time;
+    private List<String> orders;
+    private List<String> couriers;
+    private HashSet<String> waitList;
     public DispatcherActor(String name){
         super(name);
-        String myAddress = super.getMyAddress();
+        orders = new ArrayList<String>();
+        couriers = new ArrayList<String>();
+        waitList = new HashSet<String>();
     }
-
-    public String[] getOrders(){return orders;}
-    public String[] getCouriers(){return couriers;}
+    public List<String> getOrders(){return orders;}
+    public List<String> getCouriers(){return couriers;}
     public String getMyAddress(){return myAddress;}
 
-//    private List<String> findCouriers(Order order){
-//        List<String> couriersList = new ArrayList<>();
-//        for (String courier:
-//             couriers) {
-//            boolean willBeInArea = ActorSystem.ask(courier, new Message(MsgType.WillBeInArea, "List<Object>?"));
-//
-//        }
-//    }
-
+    public void update(){
+        time += 1;
+        for(String courier : couriers){
+            send(courier, new Message(MsgType.Update));
+        }
+        for (String order : waitList){
+            send(order, new Message(MsgType.FindCourier));
+        }
+    }
     @Override
-    public String receiveMessage(Message message){
-        if (message.getType() == MsgType.GetTime){
-            return String.valueOf(time);
+    public Object receiveMessage(String sender, Message message){
+        switch (message.getType()){
+            case NewCourier:
+                couriers.add(sender);
+                break;
+            case NewOrder:
+                orders.add(sender);
+                break;
+            case GetCouriers:
+                return couriers;
+            case AddToWaitList:
+                if (waitList.contains(sender)){
+                    break;
+                }
+                waitList.add(sender);
+                break;
+            case RemoveFromWaitList:
+                waitList.remove(sender);
+                break;
         }
         return null;
     }
-    @Override
-    public void receiveMessage(String sender, Message message){
-
-    }
-
-    @Override
-    public String toString() {
-        return "DispatcherActor{" +
-                "orders=" + Arrays.toString(orders) +
-                ", couriers=" + Arrays.toString(couriers) +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        DispatcherActor that = (DispatcherActor) o;
-        return Arrays.equals(orders, that.orders) && Arrays.equals(couriers, that.couriers);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + Arrays.hashCode(orders);
-        result = 31 * result + Arrays.hashCode(couriers);
-        return result;
-    }
-
 }
